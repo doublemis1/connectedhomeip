@@ -1123,8 +1123,8 @@ def __check_supported_os()-> bool:
 
 def main():
     start_rpc_server()
-
-    # Never Executed: does not return here
+    
+    # Never reach here
     optParser = OptionParser()
     optParser.add_option(
         "-r",
@@ -1153,14 +1153,8 @@ def main():
             dest="bluetoothAdapter",
             default="hci0",
             type="str",
-            help="Controller bluetooth adapter ID, use --no-ble to disable bluetooth functions.",
+            help="Controller bluetooth adapter ID",
             metavar="<bluetooth-adapter>",
-        )
-        optParser.add_option(
-            "--no-ble",
-            action="store_true",
-            dest="disableBluetooth",
-            help="Disable bluetooth, calling BLE related feature with this flag results in undefined behavior.",
         )
     (options, remainingArgs) = optParser.parse_args(sys.argv[1:])
 
@@ -1170,9 +1164,7 @@ def main():
 
     adapterId = None
     if sys.platform.startswith("linux"):
-        if options.disableBluetooth:
-            adapterId = None
-        elif not options.bluetoothAdapter.startswith("hci"):
+        if not options.bluetoothAdapter.startswith("hci"):
             print(
                 "Invalid bluetooth adapter: {}, adapter name looks like hci0, hci1 etc.")
             sys.exit(-1)
@@ -1184,14 +1176,8 @@ def main():
                     "Invalid bluetooth adapter: {}, adapter name looks like hci0, hci1 etc.")
                 sys.exit(-1)
 
-    try:
-        devMgrCmd = DeviceMgrCmd(rendezvousAddr=options.rendezvousAddr,
-                                 controllerNodeId=options.controllerNodeId, bluetoothAdapter=adapterId)
-    except Exception as ex:
-        print(ex)
-        print("Failed to bringup CHIPDeviceController CLI")
-        sys.exit(1)
-
+    devMgrCmd = DeviceMgrCmd(rendezvousAddr=options.rendezvousAddr,
+                             controllerNodeId=options.controllerNodeId, bluetoothAdapter=adapterId)
     print("Chip Device Controller Shell")
     if options.rendezvousAddr:
         print("Rendezvous address set to %s" % options.rendezvousAddr)
