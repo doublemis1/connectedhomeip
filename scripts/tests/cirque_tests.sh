@@ -37,6 +37,7 @@ CIRQUE_TESTS=(
     "EchoTest"
     "MobileDeviceTest"
     "InteractionModel"
+    "BasicClusterAttributes"
 )
 
 BOLD_GREEN_TEXT="\033[1;32m"
