@@ -1,13 +1,9 @@
 FROM ubuntu:focal
 
-ARG OT_BR_POSIX_CHECKOUT=master
-
 ENV DEBIAN_FRONTEND noninteractive
 ENV PLATFORM ubuntu
 ENV DOCKER 1
-ENV OT_BR_POSIX_CHECKOUT=50b450a3
-ENV OTBR_OPTIONS="-DOTBR_SRP_ADVERTISING_PROXY=OFF -DOT_SRP_CLIENT=ON -DOT_ECDSA=ON -DOT_BACKBONE_ROUTER=OFF"
-ENV SRP client
+ENV OT_BR_POSIX_CHECKOUT 72815d01885f2ecbcfbd24d6d8ae72606c07a398
 
 RUN mkdir /app
 
@@ -19,8 +15,10 @@ RUN apt-get update \
   && apt-get install --no-install-recommends -y sudo git ca-certificates psmisc dhcpcd5 wpasupplicant wireless-tools \
   && apt-get install -y libglib2.0 avahi-daemon libavahi-client3 \
   && ln -fs /usr/share/zoneinfo/UTC /etc/localtime \
-  && git clone https://github.com/openthread/ot-br-posix . \
-  && git checkout $OT_BR_POSIX_CHECKOUT \
+  && git init \
+  && git remote add origin https://github.com/openthread/ot-br-posix \
+  && git fetch --depth 1 origin $OT_BR_POSIX_CHECKOUT \
+  && git checkout FETCH_HEAD \
   && git submodule update --init --depth=1 \
   && ./script/bootstrap \
   && ./script/setup \
@@ -42,7 +40,8 @@ RUN apt-get update \
   && echo "update_config=1" >> /etc/wpa_supplicant/wpa_supplicant.conf \
   && rm -rf /var/lib/apt/lists/*
 
-ENTRYPOINT service dbus start && \
-           otbr-agent -I wpan0 spinel+hdlc+uart:///dev/ttyUSB0 || sleep infinity
+COPY entrypoint.sh /app
+ENTRYPOINT ["/app/entrypoint.sh"]
 
 EXPOSE 80
+
