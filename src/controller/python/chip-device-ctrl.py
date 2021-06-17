@@ -1074,6 +1074,15 @@ def ble_close():
     except Exception as e:
         return __get_response_dict(status=StatusCodeEnum.FAILED, error=str(e))
 
+def get_fabric_id():
+    try:
+        fabricID = device_manager.devCtrl.GetFabricId()
+        if fabricID == 0:
+            return __get_response_dict(status = StatusCodeEnum.FAILED, error = "Fabric ID not created or encountered an error")
+        return __get_response_dict(status = StatusCodeEnum.SUCCESS, result = fabricID)
+    except Exception as e:
+         return __get_response_dict(status = StatusCodeEnum.FAILED, error = str(e))
+
 def get_pase_data() -> Dict[Any, Any]:
     """
     This method will return valid data only after the ble_connect, ip_connect method has been called
