@@ -47,7 +47,7 @@ from chip.ChipBleUtility import FAKE_CONN_OBJ_VALUE
 from chip.setup_payload import SetupPayload
 from xmlrpc.server import SimpleXMLRPCServer
 from enum import Enum
-from typing import Any, Dict,Optional
+from typing import Any, Dict, Optional, Text
 
 from enum import Enum
 from typing import Any, Dict,Optional
@@ -873,7 +873,8 @@ class DeviceMgrCmd(Cmd):
 # TODO: Implement a custom device manager instead of using the existing manager object
 # https://github.com/chip-csg/connectedhomeip/issues/8
 device_manager = DeviceMgrCmd(rendezvousAddr=None,
-                             controllerNodeId=0, bluetoothAdapter=0)
+                              controllerNodeId=0,
+                              bluetoothAdapter=0)
 
 
 # CHIP commands needed by the Harness Tool
@@ -881,13 +882,24 @@ def echo_alive(message):
     print(message)
     return message
 
-### XMLRPC server is not able to provided large int, better to get string and recast to int
-def resolve(fabric_id: str, node_id: int) -> Dict[str, Any]:
+
+# XMLRPC server is not able to provided large int, better to get string and recast to int
+def resolve(fabric_id: Text, node_id: int) -> Dict[Text, Any]:
+    """
+    Method to resolve the ip address based on fabric id and node id of commissioned device.
+    Args:
+        fabric_id (text): fabric id assigned to the DUT
+        node_id (int): node id assigned to the DUT
+
+    Returns:
+        Dict[str, Any]: Dictionary of RPC response for ZCL cluster command
+    """
     try:
         __check_supported_os()
-        err = device_manager.devCtrl.ResolveNode(int(fabric_id), node_id)
-        if err != 0:
-            return __get_response_dict(status=StatusCodeEnum.FAILED, error=f"Failed to resolve node, with error code: {err}")
+        error = device_manager.devCtrl.ResolveNode(int(fabric_id), node_id)
+        if error != 0:
+            return __get_response_dict(status=StatusCodeEnum.FAILED,
+                                       error=f"Failed to resolve node, with error code: {error}")
 
         address = device_manager.devCtrl.GetAddressAndPort(node_id)
         if address is not None:
@@ -909,7 +921,7 @@ def zcl_command(
     """Generic API for sending ZCL Cluster commands
     Each ZCL command has following format:
     zcl <Cluster> <Command> <Node Id> <Endpoint Id> <Group Id> [optional arguments]
-    
+
     Args:
         cluster (str): Name of cluster
         command (str): Command to be run for the mentioned cluster
@@ -923,7 +935,7 @@ def zcl_command(
         exceptions.UnknownCommand: when incorrect cluster and/or command passed
 
     Returns:
-        Dict[str, Any]: Dictionary of RPC response for ZCL cluster command  
+        Dict[str, Any]: Dictionary of RPC response for ZCL cluster command
     """
     try:
         __check_supported_os()
@@ -965,56 +977,103 @@ def __format_zcl_arguments_from_dict(optional_args: dict, command: dict) -> Dict
     return formatted_command_args
     
 
-def zcl_add_network(node_id: int, args: Dict[str, str], endpoint_id: Optional[int] = 1, group_id: Optional[int] = 0, breadcrumb: Optional[int] = 0, timeoutMs: Optional[int] = 1000) -> Dict[str, Any] :
+def zcl_add_network(node_id: int,
+                    arguments: Dict[Text, Text],
+                    endpoint_id: int = 1,
+                    group_id: int = 0,
+                    breadcrumb: int = 0,
+                    timeout_ms: int = 1000) -> Dict[Text, Any]:
+    """
+    Method to send AddWifiNetwork or AddThreadNetwork zcl command.
+    Args:
+        node_id (Text): node id assigned to the DUT
+        arguments (Dict[Text, Text]): parameters provided to the zcl command, ssid and password if WiFi or
+        operationalDataset if Thread network
+        endpoint_id (int): cluster endpoint
+        group_id (int): group id assigned to the DUT
+        breadcrumb (int): commissioner-specific small payload
+        timeout_ms (int): time waiting to zcl response in milliseconds
+
+    Returns:
+        Dict[str, Any]: Dictionary of RPC response for ZCL cluster command
+    """
     try:
         __check_supported_os()
-        command: str = ""
         parameters = {}
-        if args.get("ssid") and args.get("password"):
-            parameters['ssid'] = args.get("ssid").encode("utf-8") + b'\x00'
-            parameters['credentials'] = args.get("password").encode("utf-8") + b'\x00'
+        if arguments.get("ssid") and arguments.get("password"):
+            parameters['ssid'] = arguments.get("ssid").encode("utf-8") + b'\x00'
+            parameters['credentials'] = arguments.get("password").encode("utf-8") + b'\x00'
             command = "AddWifiNetwork"
-        elif args.get("operationalDataset"):
-            parameters['operationalDataset'] = bytes.fromhex(args.get("operationalDataset"))
+        elif arguments.get("operationalDataset"):
+            parameters['operationalDataset'] = bytes.fromhex(arguments.get("operationalDataset"))
             command = "AddThreadNetwork"
         else:
-            raise Exception("(ssid and password) or dataset need to be provided")
+            raise Exception("(ssid and password) or dataset need to be provided.")
         parameters['breadcrumb'] = breadcrumb
-        parameters['timeoutMs'] = timeoutMs
-        err, res = device_manager.devCtrl.ZCLSend("NetworkCommissioning", command, node_id, endpoint_id, group_id,
-                                                  parameters, blocking=True)
-        if err != 0:
+        parameters['timeoutMs'] = timeout_ms
+        error, result = device_manager.devCtrl.ZCLSend("NetworkCommissioning",
+                                                       command,
+                                                       node_id,
+                                                       endpoint_id,
+                                                       group_id,
+                                                       parameters,
+                                                       blocking=True)
+        if error != 0:
             return __get_response_dict(status=StatusCodeEnum.FAILED)
-        elif res != None:
-            return __get_response_dict(status=StatusCodeEnum.SUCCESS, result=str(res))
+        elif result is not None:
+            return __get_response_dict(status=StatusCodeEnum.SUCCESS, result=str(result))
         else:
             return __get_response_dict(status=StatusCodeEnum.SUCCESS)
 
     except Exception as e:
-        return __get_response_dict(status = StatusCodeEnum.FAILED, error = str(e))
+        return __get_response_dict(status=StatusCodeEnum.FAILED, error=str(e))
 
-def zcl_enable_network(node_id: int, args: Dict[str,str], endpoint_id: Optional[int] = 1, group_id: Optional[int] = 0, breadcrumb: Optional[int] = 0, timeoutMs: Optional[int] = 1000) -> Dict[str, Any]:
+
+def zcl_enable_network(node_id: int,
+                       arguments: Dict[Text, Text],
+                       endpoint_id: Optional[int] = 1,
+                       group_id: Optional[int] = 0,
+                       breadcrumb: Optional[int] = 0,
+                       timeout_ms: Optional[int] = 1000) -> Dict[Text, Any]:
+    """
+    Method to send EnableNetwork zcl command.
+    Args:
+        node_id (Text): node id assigned to the DUT
+        arguments (Dict[Text, Text]): parameters provided to the zcl command, ssid  WiFi or extpanid if Thread network
+        endpoint_id (int): cluster endpoint
+        group_id (int): group id assigned to the DUT
+        breadcrumb (int): commissioner-specific small payload
+        timeout_ms (int): time waiting to zcl response in milliseconds
+
+    Returns:
+        Dict[str, Any]: Dictionary of RPC response for ZCL cluster command
+    """
     try:
         __check_supported_os()
         parameters = {}
-        if args.get("ssid"):
-            parameters['networkID'] = args.get("ssid").encode("utf-8") + b'\x00'
-        elif args.get("extpanid"):
-            parameters['networkID'] = bytes.fromhex(args.get("extpanid"))
+        if arguments.get("ssid"):
+            parameters['networkID'] = arguments.get("ssid").encode("utf-8") + b'\x00'
+        elif arguments.get("extpanid"):
+            parameters['networkID'] = bytes.fromhex(arguments.get("extpanid"))
         else:
-            raise Exception("ssid or extpanid need to be provided")
+            raise Exception("ssid or extpanid need to be provided.")
         parameters['breadcrumb'] = breadcrumb
-        parameters['timeoutMs'] = timeoutMs
+        parameters['timeoutMs'] = timeout_ms
 
-        err, res = device_manager.devCtrl.ZCLSend("NetworkCommissioning", "EnableNetwork", node_id, endpoint_id,
-                                                  group_id, parameters, blocking=True)
-        if err != 0:
+        error, result = device_manager.devCtrl.ZCLSend("NetworkCommissioning",
+                                                       "EnableNetwork",
+                                                       node_id,
+                                                       endpoint_id,
+                                                       group_id,
+                                                       parameters,
+                                                       blocking=True)
+        if error != 0:
             return __get_response_dict(status=StatusCodeEnum.FAILED)
         else:
-            return __get_response_dict(status=StatusCodeEnum.SUCCESS, result=str(res))
-        
+            return __get_response_dict(status=StatusCodeEnum.SUCCESS, result=str(result))
     except Exception as e:
         return __get_response_dict(status=StatusCodeEnum.FAILED, error=str(e))
+
 
 def ble_scan():
     try:
