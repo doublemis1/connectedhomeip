@@ -24,7 +24,6 @@ using namespace ::chip;
 
 void InitDataModelHandler()
 {
-    ChipLogProgress(Zcl, "Using ZAP configuration...");
     emberAfEndpointConfigure();
     emberAfInit();
 }

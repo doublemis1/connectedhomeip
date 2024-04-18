@@ -265,7 +265,7 @@ struct CommonCaseDeviceServerInitParams : public ServerInitParams
         ReturnErrorOnFailure(sSubscriptionResumptionStorage.Init(this->persistentStorageDelegate));
         this->subscriptionResumptionStorage = &sSubscriptionResumptionStorage;
 #else
-        ChipLogProgress(AppServer, "Subscription persistence not supported");
+        ChipLogDetail(AppServer, "Subscription persistence not supported");
 #endif
 
         return CHIP_NO_ERROR;

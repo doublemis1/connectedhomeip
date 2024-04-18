@@ -957,7 +957,7 @@ class AccessControlDelegate : public AccessControl::Delegate
 public:
     CHIP_ERROR Init() override
     {
-        ChipLogProgress(DataManagement, "Examples::AccessControlDelegate::Init");
+        ChipLogDetail(DataManagement, "Examples::AccessControlDelegate::Init");
         for (auto & storage : EntryStorage::acl)
         {
             storage.Clear();
@@ -965,7 +965,7 @@ public:
         return CHIP_NO_ERROR;
     }
 
-    void Finish() override { ChipLogProgress(DataManagement, "Examples::AccessControlDelegate::Finish"); }
+    void Finish() override { ChipLogDetail(DataManagement, "Examples::AccessControlDelegate::Finish"); }
 
     CHIP_ERROR GetMaxEntriesPerFabric(size_t & value) const override
     {

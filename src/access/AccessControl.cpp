@@ -182,7 +182,7 @@ CHIP_ERROR AccessControl::Init(AccessControl::Delegate * delegate, DeviceTypeRes
 {
     VerifyOrReturnError(!IsInitialized(), CHIP_ERROR_INCORRECT_STATE);
 
-    ChipLogProgress(DataManagement, "AccessControl: initializing");
+    ChipLogDetail(DataManagement, "AccessControl: initializing");
 
     VerifyOrReturnError(delegate != nullptr, CHIP_ERROR_INVALID_ARGUMENT);
     CHIP_ERROR retval = delegate->Init();
@@ -639,7 +639,7 @@ AccessControl & GetAccessControl()
 
 void SetAccessControl(AccessControl & accessControl)
 {
-    ChipLogProgress(DataManagement, "AccessControl: setting");
+    ChipLogDetail(DataManagement, "AccessControl: setting");
     globalAccessControl = &accessControl;
 }
 

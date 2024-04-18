@@ -476,7 +476,7 @@ CHIP_ERROR AccessControlAttribute::Write(const ConcreteDataAttributePath & aPath
 
 void MatterAccessControlPluginServerInitCallback()
 {
-    ChipLogProgress(DataManagement, "AccessControlCluster: initializing");
+    ChipLogDetail(DataManagement, "AccessControlCluster: initializing");
 
     registerAttributeAccessOverride(&sAttribute);
     GetAccessControl().AddEntryListener(sAttribute);

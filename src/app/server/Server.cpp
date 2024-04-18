@@ -100,7 +100,7 @@ static ::chip::app::CircularEventBuffer sLoggingBuffer[CHIP_NUM_EVENT_LOGGING_BU
 
 CHIP_ERROR Server::Init(const ServerInitParams & initParams)
 {
-    ChipLogProgress(AppServer, "Server initializing...");
+    ChipLogDetail(AppServer, "Server initializing...");
     assertChipStackLockedByCurrentThread();
 
     mInitTimestamp = System::SystemClock().GetMonotonicMicroseconds64();
@@ -425,7 +425,7 @@ exit:
     else
     {
         // NOTE: this log is scraped by the test harness.
-        ChipLogProgress(AppServer, "Server Listening...");
+        ChipLogDetail(AppServer, "Server Listening...");
     }
     return err;
 }
@@ -494,7 +494,7 @@ void Server::OnPlatformEventWrapper(const DeviceLayer::ChipDeviceEvent * event, 
 
 void Server::RejoinExistingMulticastGroups()
 {
-    ChipLogProgress(AppServer, "Joining Multicast groups");
+    ChipLogDetail(AppServer, "Joining Multicast groups");
     CHIP_ERROR err = CHIP_NO_ERROR;
     for (const FabricInfo & fabric : mFabrics)
     {
