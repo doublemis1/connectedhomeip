@@ -72,7 +72,7 @@ void FailSafeContext::FailSafeTimerExpired()
         return;
     }
 
-    ChipLogProgress(FailSafe, "Fail-safe timer expired");
+    ChipLogProgress(Zcl, "Fail-safe timer expired");
     ScheduleFailSafeCleanup(mFabricIndex, mAddNocCommandHasBeenInvoked, mUpdateNocCommandHasBeenInvoked);
 }
 
@@ -94,7 +94,7 @@ void FailSafeContext::ScheduleFailSafeCleanup(FabricIndex fabricIndex, bool addN
 
     if (status != CHIP_NO_ERROR)
     {
-        ChipLogError(FailSafe, "Failed to post fail-safe timer expired: %" CHIP_ERROR_FORMAT, status.Format());
+        ChipLogError(Zcl, "Failed to post fail-safe timer expired: %" CHIP_ERROR_FORMAT, status.Format());
     }
 
     PlatformMgr().ScheduleWork(HandleDisarmFailSafe, reinterpret_cast<intptr_t>(this));
@@ -136,7 +136,7 @@ void FailSafeContext::DisarmFailSafe()
 
     ResetState();
 
-    ChipLogProgress(FailSafe, "Fail-safe cleanly disarmed");
+    ChipLogProgress(Zcl, "Fail-safe cleanly disarmed");
 }
 
 void FailSafeContext::ForceFailSafeTimerExpiry()

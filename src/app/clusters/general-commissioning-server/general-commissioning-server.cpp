@@ -217,7 +217,7 @@ bool emberAfGeneralCommissioningClusterCommissioningCompleteCallback(
     auto & failSafe               = Server::GetInstance().GetFailSafeContext();
     auto & fabricTable            = Server::GetInstance().GetFabricTable();
 
-    ChipLogProgress(FailSafe, "GeneralCommissioning: Received CommissioningComplete");
+    ChipLogProgress(Zcl, "GeneralCommissioning: Received CommissioningComplete");
 
     Commands::CommissioningCompleteResponse::Type response;
     if (!failSafe.IsFailSafeArmed())

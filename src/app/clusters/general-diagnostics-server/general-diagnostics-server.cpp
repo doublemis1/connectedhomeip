@@ -270,7 +270,7 @@ GeneralDiagnosticsServer & GeneralDiagnosticsServer::Instance()
 // Gets called when the device has been rebooted.
 void GeneralDiagnosticsServer::OnDeviceReboot(BootReasonEnum bootReason)
 {
-    ChipLogDetail(Zcl, "GeneralDiagnostics: OnDeviceReboot - reason %s", bootReason);
+    ChipLogDetail(Zcl, "GeneralDiagnostics: OnDeviceReboot");
 
     ReportAttributeOnAllEndpoints(GeneralDiagnostics::Attributes::BootReason::Id);
 

@@ -47,7 +47,7 @@ void PrettyPrintIMBlankLine()
     {
         // Don't need to explicitly NULL-terminate the string because
         // snprintf takes care of that.
-        ChipLogDetail(DataManagement, "%s", gLineBuffer);
+        ChipLogProgress(DataManagement, "%s", gLineBuffer);
         gCurLineBufferSize = 0;
     }
 
