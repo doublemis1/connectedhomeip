@@ -596,7 +596,7 @@ GenericThreadStackManagerImpl_OpenThread<ImplClass>::_SetThreadDeviceType(Connec
             deviceTypeStr = "(unknown)";
             break;
         }
-        ChipLogProgress(DeviceLayer, "Setting OpenThread device type to %s", deviceTypeStr);
+        ChipLogDetail(DeviceLayer, "Setting OpenThread device type to %s", deviceTypeStr);
     }
 
 #endif // CHIP_PROGRESS_LOGGING
@@ -1134,7 +1134,7 @@ CHIP_ERROR GenericThreadStackManagerImpl_OpenThread<ImplClass>::DoInit(otInstanc
 
 exit:
 
-    ChipLogProgress(DeviceLayer, "OpenThread started: %s", otThreadErrorToString(otErr));
+    ChipLogDetail(DeviceLayer, "OpenThread started: %s", otThreadErrorToString(otErr));
     return err;
 }
 

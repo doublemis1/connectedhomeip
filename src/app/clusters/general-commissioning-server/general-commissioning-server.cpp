@@ -154,7 +154,7 @@ bool emberAfGeneralCommissioningClusterArmFailSafeCallback(app::CommandHandler *
     auto & failSafeContext = Server::GetInstance().GetFailSafeContext();
     Commands::ArmFailSafeResponse::Type response;
 
-    ChipLogProgress(FailSafe, "GeneralCommissioning: Received ArmFailSafe (%us)",
+    ChipLogProgress(Zcl, "GeneralCommissioning: Received ArmFailSafe (%us)",
                     static_cast<unsigned>(commandData.expiryLengthSeconds));
 
     /*
@@ -218,7 +218,7 @@ bool emberAfGeneralCommissioningClusterCommissioningCompleteCallback(
     auto & failSafe               = Server::GetInstance().GetFailSafeContext();
     auto & fabricTable            = Server::GetInstance().GetFabricTable();
 
-    ChipLogProgress(FailSafe, "GeneralCommissioning: Received CommissioningComplete");
+    ChipLogProgress(Zcl, "GeneralCommissioning: Received CommissioningComplete");
 
     Commands::CommissioningCompleteResponse::Type response;
     if (!failSafe.IsFailSafeArmed())
@@ -235,7 +235,7 @@ bool emberAfGeneralCommissioningClusterCommissioningCompleteCallback(
             !failSafe.MatchesFabricIndex(commandObj->GetAccessingFabricIndex()))
         {
             response.errorCode = CommissioningErrorEnum::kInvalidAuthentication;
-            ChipLogError(FailSafe, "GeneralCommissioning: Got commissioning complete in invalid security context");
+            ChipLogError(Zcl, "GeneralCommissioning: Got commissioning complete in invalid security context");
         }
         else
         {
@@ -245,12 +245,12 @@ bool emberAfGeneralCommissioningClusterCommissioningCompleteCallback(
                 if (err != CHIP_NO_ERROR)
                 {
                     // No need to revert on error: CommitPendingFabricData always reverts if not fully successful.
-                    ChipLogError(FailSafe, "GeneralCommissioning: Failed to commit pending fabric data: %" CHIP_ERROR_FORMAT,
+                    ChipLogError(Zcl, "GeneralCommissioning: Failed to commit pending fabric data: %" CHIP_ERROR_FORMAT,
                                  err.Format());
                 }
                 else
                 {
-                    ChipLogProgress(FailSafe, "GeneralCommissioning: Successfully commited pending fabric data");
+                    ChipLogProgress(Zcl, "GeneralCommissioning: Successfully commited pending fabric data");
                 }
                 CheckSuccess(err, Failure);
             }

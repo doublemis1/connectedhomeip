@@ -38,7 +38,7 @@
 
 namespace chip {
 namespace app {
-#if CHIP_CONFIG_IM_PRETTY_PRINT && CHIP_DETAIL_LOGGING
+#if CHIP_CONFIG_IM_PRETTY_PRINT && CHIP_PROGRESS_LOGGING
 /**
  * Start a new "blank" line.  This will actually print out whitespace to the
  * current indent level, which can be followed with PRETTY_PRINT_SAMELINE calls.

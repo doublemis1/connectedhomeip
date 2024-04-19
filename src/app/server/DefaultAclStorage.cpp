@@ -134,7 +134,7 @@ namespace app {
 CHIP_ERROR DefaultAclStorage::Init(PersistentStorageDelegate & persistentStorage, ConstFabricIterator first,
                                    ConstFabricIterator last)
 {
-    ChipLogProgress(DataManagement, "DefaultAclStorage: initializing");
+    ChipLogDetail(DataManagement, "DefaultAclStorage: initializing");
 
     CHIP_ERROR err;
 

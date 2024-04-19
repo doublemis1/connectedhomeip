@@ -91,8 +91,8 @@ public:
     SecureSession(SecureSessionTable & table, Type secureSessionType, uint16_t localSessionId) :
         mTable(table), mState(State::kEstablishing), mSecureSessionType(secureSessionType), mLocalSessionId(localSessionId)
     {
-        ChipLogDetail(Inet, "SecureSession[%p]: Allocated Type:%d LSID:%d", this, to_underlying(mSecureSessionType),
-                      mLocalSessionId);
+        ChipLogProgress(Inet, "SecureSession[%p]: Allocated Type:%d LSID:%d", this, to_underlying(mSecureSessionType),
+                        mLocalSessionId);
     }
 
     /**
