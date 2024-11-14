@@ -146,7 +146,7 @@ class TC_ACE_1_3(MatterBaseTest):
 
         self.step(1)
 
-        fabric_admin = self.certificate_authority_manager.activeCaList[0].adminList[0]
+        fabric_admin = self.certificate_authority_manager.activeCaList[self.default_controller.caIndex-1].adminList[0]
 
         TH0_nodeid = self.matter_test_config.controller_node_id
         TH1_nodeid = self.matter_test_config.controller_node_id + 1

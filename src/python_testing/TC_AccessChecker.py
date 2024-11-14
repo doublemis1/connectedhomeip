@@ -77,7 +77,7 @@ class AccessChecker(MatterBaseTest, BasicCompositionTests):
         self.default_acl = await self.read_single_attribute_check_success(cluster=Clusters.AccessControl, attribute=acl_attr)
         self._record_errors()
         # We need to run this test from two controllers so we can test access to the ACL cluster while retaining access to the ACL cluster
-        fabric_admin = self.certificate_authority_manager.activeCaList[0].adminList[0]
+        fabric_admin = self.certificate_authority_manager.activeCaList[self.default_controller.caIndex-1].adminList[0]
         self.TH2_nodeid = self.matter_test_config.controller_node_id + 1
         self.TH2 = fabric_admin.NewController(nodeId=self.TH2_nodeid)
 

@@ -144,8 +144,7 @@ class TC_ACE_1_2(MatterBaseTest):
     @async_test_body
     async def test_TC_ACE_1_2(self):
         self.print_step(1, "Commissioning, already done")
-
-        fabric_admin = self.certificate_authority_manager.activeCaList[0].adminList[0]
+        fabric_admin = self.certificate_authority_manager.activeCaList[self.default_controller.caIndex-1].adminList[0]
 
         TH1_nodeid = self.matter_test_config.controller_node_id
         TH2_nodeid = self.matter_test_config.controller_node_id + 1
