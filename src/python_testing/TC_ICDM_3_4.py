@@ -119,18 +119,9 @@ class TC_ICDM_3_4(MatterBaseTest):
         self.step("2b")
         if not is_ci:
             time.sleep(wait_time_reboot)
+            self.default_controller.ExpireSessions(self.dut_node_id)
 
         self.step(3)
-        if not is_ci:
-            # since device has rebooted, force establishing a new CASE session by closing it
-            self.config = MatterTestConfig()
-            self.stack = MatterStackState(self.config)
-            devCtrl = self.stack.certificate_authorities[0].adminList[0].NewController(
-                nodeId=self.config.controller_node_id,
-                paaTrustStorePath=str(self.config.paa_trust_store_path),
-                catTags=self.config.controller_cat_tags
-            )
-            devCtrl.MarkSessionDefunct(self.dut_node_id)
         icdCounter2 = await self._read_icdm_attribute_expect_success(attribute=attributes.ICDCounter)
         asserts.assert_greater_equal(icdCounter2, icdCounter1,
                                      "ICDCounter have reboot is not greater or equal to the ICDCounter read before the reboot.")
